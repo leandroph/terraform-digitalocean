@@ -1,1 +1,1 @@
-# terraform-digitalocen
+# terraform-digitalocean
