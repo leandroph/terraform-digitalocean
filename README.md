@@ -23,6 +23,7 @@ Para testarmos a aplicação, temos que executar os N passos a seguir:
 2. [Criar e adicionar chave ssh na DigitalOcean](#criar-ssh)
 3. [Criar Token na DigitalOcean](#criar-token)
 4. [Iniciar o Provisionamento da Infraestrutura](#iniciar-infra)
+5. [Instalação do Jenkins](#instalar-jenkins)
 
 
 <a name="download-github"></a>
@@ -85,7 +86,7 @@ git clone https://github.com/leandroph/terraform-digitalocean.git
   ```
   Após a Apply a Infraestrutura já está criada na DigitalOcean, onde foi criada uma máquina virtual e um cluster Kubernetes.
   
-  3. Conecatar na VM criada, utilize o IP informado na saída anterior:
+  3. Conectar na VM criada, utilize o IP informado na saída anterior:
   ```bash
   ssh -i /home/leandro/.ssh/terraform root@<your ip>
   ```
@@ -106,4 +107,47 @@ git clone https://github.com/leandroph/terraform-digitalocean.git
   default-m9zfm   Ready    <none>   33m   v1.25.4
   ```
   
+<a name="instalar-jenkins"></a>
+### 5. Instalação do Jenkins:
+ 1. Caso não estiver conectado na VM, é preciso conectar na máquina criada, utilize o IP informado na saída anterior:
+  ```bash
+  ssh -i /home/leandro/.ssh/terraform root@<your ip>
+  ```
+  
+ 2. Realizar o update do sistema e instação do Java JDK, pois o [Jenkins](https://www.jenkins.io/doc/book/installing/linux/) necessita que o Java esteja instalado na VM:
+ ```bash
+ apt update
+ apt install openjdk-17-jdk -y
+ ```
+ 
+ 3. Realizar a instalação do [Jenkins](https://www.jenkins.io/):
+ ```bash
+  curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+ ```
+ 
+ 4. Instalar o [Docker](https://docs.docker.com/engine/install/ubuntu/) e adicionar o usuário jenkins ao grupo do Docker:
+ ```bash
+ usermod -aG docker jenkins
+ ```
+ Reiniciar o Jenkins:
+ ```bash
+ systemctl restart jenkins
+ ```
+ 5. instalar o [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/).
+ 
+ 6. Acessar o Jenkins no navegador `<IP_máquina>:8080`, e seguir com as configurações finais.
+ 
+ 7. Será preciso instalar alguns plugins do Docker e Kubernetes, ir em Gerenciar Jenkins -> Gerenciar extensões -> Extensões Disponíveis, e instalar as seguintes extenções:
+ - Docker
+ - Docker Pipeline
+ - Kubernetes CLI
+ 
 
+ 
+ 
